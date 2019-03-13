@@ -125,7 +125,8 @@
 				{ "include": "#comment" },
 				{ "include": "#class-constructor-statement" },
 				{ "include": "#class-method-statement" },
-				{ "include": "#class-field-statement" }
+				{ "include": "#class-field-statement" },
+				{ "include": "source.lunar" }
 			]
 		},
 		"import-statement": {
