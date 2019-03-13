@@ -117,7 +117,7 @@
 				"3": { "name": "keyword.other.inherited-class.lunar" },
 				"4": { "name": "entity.other.inherited-class.lunar" }
 			},
-			"end": "(end)",
+			"end": "\\b(end)\\b",
 			"endCaptures": {
 				"1": { "name": "keyword.control.lunar" }
 			},
@@ -200,7 +200,7 @@
 				"6": { "name": "punctuation.definition.parameters.end.lunar" },
 				"7": { "patterns": [ { "include": "#type-expression" } ] }
 			},
-			"end": "(end)",
+			"end": "\\b(end)\\b",
 			"endCaptures": {
 				"1": { "name": "keyword.control.lunar" }
 			},
@@ -241,7 +241,7 @@
 				"3": { "patterns": [ { "include": "#function-parameters" } ] },
 				"4": { "name": "punctuation.definition.parameters.end.lunar" }
 			},
-			"end": "(end)",
+			"end": "\\b(end)\\b",
 			"endCaptures": {
 				"1": { "name": "keyword.control.lunar" }
 			},
@@ -260,7 +260,7 @@
 				"6": { "name": "punctuation.definition.parameters.end.lunar" },
 				"7": { "patterns": [ { "include": "#type-expression" } ] }
 			},
-			"end": "(end)",
+			"end": "\\b(end)\\b",
 			"endCaptures": {
 				"1": { "name": "keyword.control.lunar" }
 			},
