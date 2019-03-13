@@ -1,0 +1,393 @@
+{
+	"name": "Lunar",
+	"scopeName": "source.lunar",
+	"patterns": [
+		{ "include": "#comment" },
+		{ "include": "#statements" },
+		{ "include": "#new-expression" },
+		{ "include": "#integer-hexadecimal-literal" },
+		{ "include": "#float-hexadecimal-literal" },
+		{ "include": "#integer-literal" },
+		{ "include": "#float-literal" },
+		{ "include": "#single-quote-string-literal" },
+		{ "include": "#double-quote-string-literal" },
+		{ "include": "#block-string-literal" },
+		{ "include": "#shebang-header" },
+		{ "include": "#control-keywords" },
+		{ "include": "#self" },
+		{ "include": "#builtin-constants" },
+		{ "include": "#builtin-functions" },
+		{ "include": "#builtin-libraries" },
+		{ "include": "#operator-keywords" },
+		{ "include": "#function-call-expression" },
+		{ "include": "#member-expression" },
+		{ "include": "#operator-symbols" }
+	],
+	"repository": {
+		"escaped_char": {
+			"patterns": [
+				{
+					"match": "\\\\[abfnrtvz\\\\\"'\\n]",
+					"name": "constant.character.escape.lunar"
+				},
+				{
+					"match": "\\\\\\d{1,3}",
+					"name": "constant.character.escape.byte.lunar"
+				},
+				{
+					"match": "\\\\x[0-9A-Fa-f][0-9A-Fa-f]",
+					"name": "constant.character.escape.byte.lunar"
+				},
+				{
+					"match": "\\\\u\\{[0-9A-Fa-f]+\\}",
+					"name": "constant.character.escape.unicode.lunar"
+				},
+				{
+					"match": "\\\\.",
+					"name": "invalid.illegal.character.escape.lunar"
+				}
+			]
+		},
+		"comment": {
+			"begin": "(^[ \\t]+)?(?=--)",
+			"beginCaptures": {
+				"1": { "name": "punctuation.whitespace.comment.leading.lunar" }
+			},
+			"end": "(?!\\G)((?!^)[ \\t]+\\n)?",
+			"endCaptures": {
+				"1": { "name": "punctuation.whitespace.comment.trailing.lunar" }
+			},
+			"patterns": [
+				{
+					"begin": "--\\[(=*)\\[",
+					"beginCaptures": {
+						"0": { "name": "punctuation.definition.comment.begin.lunar" }
+					},
+					"end": "\\]\\1\\]",
+					"endCaptures": {
+						"0": { "name": "punctuation.definition.comment.end.lunar" }
+					},
+					"name": "comment.block.lunar"
+				},
+				{
+					"begin": "--",
+					"beginCaptures": {
+						"0": { "name": "punctuation.definition.comment.lunar" }
+					},
+					"end": "\\n",
+					"name": "comment.line.double-dash.lunar"
+				}
+			]
+		},
+		"statements": {
+			"patterns": [
+				{ "include": "#export-statements" },
+				{ "include": "#class-statement" },
+				{ "include": "#function-statement" },
+				{ "include": "#import-statement" },
+				{ "include": "#from-import-statement" },
+				{ "include": "#local-variable-declaration" },
+				{ "include": "#lambda-expression" },
+				{ "include": "#variable-declaration" }
+			]
+		},
+		"export-statements": {
+			"patterns": [
+				{
+					"match": "\\b(?:(export)\\s+)(?:(as)\\s+)?(?=class|function|[a-zA-Z_][a-zA-Z0-9_]*\\s*=)",
+					"name": "meta.export.lunar",
+					"captures": {
+						"1": { "name": "keyword.other.export.lunar" },
+						"2": { "name": "keyword.other.as.lunar" }
+					},
+					"patterns": [
+						{ "match": "class", "include": "#class-statement" },
+						{ "match": "function", "include": "#function-statement" },
+						{ "match": "[a-zA-Z_][a-zA-Z0-9_]*", "include": "variable.other.lunar" }
+					]
+				}
+			]
+		},
+		"class-statement": {
+			"name": "meta.class.lunar",
+			"begin": "\\b(class)\\s+(\\w+)\\s*(?:(<<)?\\s*(\\w*))",
+			"beginCaptures": {
+				"1": { "name": "keyword.other.class.lunar" },
+				"2": { "name": "entity.name.type.lunar" },
+				"3": { "name": "keyword.other.inherited-class.lunar" },
+				"4": { "name": "entity.other.inherited-class.lunar" }
+			},
+			"end": "(end)",
+			"endCaptures": {
+				"1": { "name": "keyword.control.lunar" }
+			},
+			"patterns": [
+				{ "include": "#comment" },
+				{ "include": "#class-constructor-statement" },
+				{ "include": "#class-method-statement" },
+				{ "include": "#class-field-statement" }
+			]
+		},
+		"import-statement": {
+			"match": "\\b(import)\\s+(['\"][\\w\\W\/\\.]+['\"])*",
+			"captures": {
+				"1": { "name": "keyword.other.import.lunar" },
+				"2": { "name": "string.quoted.double.lunar" }
+			}
+		},
+		"from-import-statement": {
+			"begin": "\\b(from)\\s+(['\"][\\w\\W\/\\.]*['\"])*\\s+(import)\\s+",
+			"beginCaptures": {
+				"1": { "name": "keyword.other.import.lunar" },
+				"2": { "name": "string.quoted.double.lunar" },
+				"3": { "name": "keyword.other.import.lunar" }
+			},
+			"end": "(\\n|;)",
+			"patterns": [
+				{ "match": "(\\w+)\\s+(as)\\s+(\\w+)", "captures": {
+					"1": { "name": "variable.parameter.lunar" },
+					"2": { "name": "keyword.other.as.lunar" },
+					"3": { "name": "variable.parameter.lunar" }
+				}},
+				{ "match": "(\\w+)", "captures": {
+					"1": { "name": "variable.parameter.lunar" }
+				}},
+				{ "match": "(\\*)\\s+(as)\\s+(\\w+)", "captures": {
+					"1": { "name": "keyword.operator.lunar" },
+					"2": { "name": "keyword.other.as.lunar" },
+					"3": { "name": "variable.parameter.lunar" }
+				}}
+			]
+		},
+		"type-expression": {
+			"patterns": [
+				{
+					"match": "\\b(string|boolean|number|table|function|userdata|nil|thread)\\b",
+					"captures": {
+						"1": { "name": "support.type.builtin.lunar"}
+					}
+				},
+				{
+					"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+					"captures": {
+						"1": { "name": "entity.name.type.lunar" }
+					}
+				}
+			]
+		},
+		"class-field-statement": {
+			"begin": "\\b(?:(static)\\s+)?(\\w+)(?::\\s*(\\w+))?\\s*(=)?",
+			"beginCaptures": {
+				"1": { "name": "storage.modifier.static.lunar" },
+				"2": { "name": "variable.other.lunar" },
+				"3": { "patterns": [ { "include": "#type-expression" } ] },
+				"4": { "name": "keyword.operator.lunar" }
+			},
+			"end": "\\n|;",
+			"patterns": [
+				{ "include": "source.lunar" }
+			]
+		},
+		"class-method-statement": {
+			"begin": "\\b(?:(static)\\s+)?(function)\\s*(?:\\s+(\\w+)?)\\s*?(\\()(.*)(\\))(?::\\s*(\\w+))?",
+			"beginCaptures": {
+				"1": { "name": "storage.modifier.static.lunar" },
+				"2": { "name": "keyword.control.lunar" },
+				"3": { "name": "entity.name.function.lunar" },
+				"4": { "name": "punctuation.definition.parameters.begin.lunar" },
+				"5": { "patterns": [ { "include": "#function-parameters" } ] },
+				"6": { "name": "punctuation.definition.parameters.end.lunar" },
+				"7": { "patterns": [ { "include": "#type-expression" } ] }
+			},
+			"end": "(end)",
+			"endCaptures": {
+				"1": { "name": "keyword.control.lunar" }
+			},
+			"patterns": [
+				{ "include": "source.lunar" }
+			]
+		},
+		"lambda-expression": {
+			"begin": "(\\|)(.*)(\\|)",
+			"beginCaptures": {
+				"1": { "name": "punctuation.definition.parameters.begin.lunar" },
+				"2": { "patterns": [ { "include": "#function-parameters" } ] },
+				"3": { "name": "punctuation.definition.parameters.end.lunar" },
+				"4": { "patterns": [ { "include": "#type-expression" } ] }
+			},
+			"end": "\\n|;",
+			"endCaptures": {
+				"1": { "name": "keyword.control.lunar" }
+			},
+			"patterns": [
+				{ "include": "source.lunar" }
+			]
+		},
+		"function-parameters": {
+			"match": "([a-zA-Z_][a-zA-Z0-9_]*)(?::\\s*(\\w+))?\\s*(?:=(=)?\\s*([^,)]*)?)?",
+			"captures": {
+				"1": { "name": "variable.parameter.function.lunar" },
+				"2": { "patterns": [ { "include": "#type-expression" } ] },
+				"3": { "name": "keyword.operator.lunar" },
+				"4": { "patterns": [ { "include": "source.lunar" } ] }
+			}
+		},
+		"class-constructor-statement": {
+			"begin": "\\b(constructor)\\s*(\\()(.*)(\\))",
+			"beginCaptures": {
+				"1": { "name": "storage.type.constructor.lunar" },
+				"2": { "name": "punctuation.definition.parameters.begin.lunar" },
+				"3": { "patterns": [ { "include": "#function-parameters" } ] },
+				"4": { "name": "punctuation.definition.parameters.end.lunar" }
+			},
+			"end": "(end)",
+			"endCaptures": {
+				"1": { "name": "keyword.control.lunar" }
+			},
+			"patterns": [
+				{ "include": "source.lunar" }
+			]
+		},
+		"function-statement": {
+			"begin": "\\b(?:(local)\\s+)?(function)\\s*(?:\\s+([a-zA-Z_][a-zA-Z0-9_]*(?:[\\.:][a-zA-Z_][a-zA-Z0-9_]*)?)\\s*)?(\\()(.*)(\\))(?::\\s*(\\w+))?",
+			"beginCaptures": {
+				"1": { "name": "storage.modifier.local.lunar" },
+				"2": { "name": "keyword.control.lunar" },
+				"3": { "name": "entity.name.function.lunar" },
+				"4": { "name": "punctuation.definition.parameters.begin.lunar" },
+				"5": { "patterns": [ { "include": "#function-parameters" } ] },
+				"6": { "name": "punctuation.definition.parameters.end.lunar" },
+				"7": { "patterns": [ { "include": "#type-expression" } ] }
+			},
+			"end": "(end)",
+			"endCaptures": {
+				"1": { "name": "keyword.control.lunar" }
+			},
+			"patterns": [
+				{ "include": "source.lunar" }
+			]
+		},
+		"integer-hexadecimal-literal": {
+			"match": "(?<![\\w\\d.])0[xX][0-9A-Fa-f]+(?![pPeE.0-9])",
+			"name": "constant.numeric.integer.hexadecimal.lunar"
+		},
+		"float-hexadecimal-literal": {
+			"match": "(?<![\\w\\d.])0[xX][0-9A-Fa-f]+(\\.[0-9A-Fa-f]+)?([eE]-?\\d*)?([pP][-+]\\d+)?",
+			"name": "constant.numeric.float.hexadecimal.lunar"
+		},
+		"integer-literal": {
+			"match": "(?<![\\w\\d.])\\d+(?![eE.0-9])",
+			"name": "constant.numeric.integer.lunar"
+		},
+		"float-literal": {
+			"match": "(?<![\\w\\d.])\\d+(\\.\\d+)?([eE]-?\\d*)?",
+			"name": "constant.numeric.float.lunar"
+		},
+		"single-quote-string-literal": {
+			"begin": "'",
+			"beginCaptures": {
+				"0": { "name": "punctuation.definition.string.begin.lunar" }
+			},
+			"end": "'",
+			"endCaptures": {
+				"0": { "name": "punctuation.definition.string.end.lunar" }
+			},
+			"name": "string.quoted.single.lunar",
+			"patterns": [
+				{ "include": "#escaped_char" }
+			]
+		},
+		"double-quote-string-literal": {
+			"begin": "\"",
+			"beginCaptures": {
+				"0": { "name": "punctuation.definition.string.begin.lunar" }
+			},
+			"end": "\"",
+			"endCaptures": {
+				"0": { "name": "punctuation.definition.string.end.lunar" }
+			},
+			"name": "string.quoted.double.lunar",
+			"patterns": [
+				{ "include": "#escaped_char" }
+			]
+		},
+		"block-string-literal": {
+			"begin": "(?<!--)\\[(=*)\\[",
+			"beginCaptures": {
+				"0": { "name": "punctuation.definition.string.begin.lunar" }
+			},
+			"end": "\\]\\1\\]",
+			"endCaptures": {
+				"0": { "name": "punctuation.definition.string.end.lunar" }
+			},
+			"name": "string.quoted.other.multiline.lunar"
+		},
+		"shebang-header": {
+			"captures": {
+				"1": { "name": "punctuation.definition.comment.lunar" }
+			},
+			"match": "\\A(#!).*$\\n?",
+			"name": "comment.line.shebang.lunar"
+		},
+		"operator-symbols": {
+			"match": "\\+|-|%|#|\\*|\\/|\\^|==?|~=|<=?|>=?|(?<!\\.)\\.{2}(?!\\.)",
+			"name": "keyword.operator.lunar"
+		},
+		"operator-keywords": {
+			"match": "\\b(and|or|not)\\b",
+			"name": "keyword.operator.lunar"
+		},
+		"builtin-libraries": {
+			"match": "(?<![^.]\\.|:)\\b(coroutine\\.(create|resume|running|status|wrap|yield)|string\\.(byte|char|dump|find|format|gmatch|gsub|len|lower|match|rep|reverse|sub|upper)|table\\.(concat|insert|maxn|remove|sort)|math\\.(abs|acos|asin|atan2?|ceil|cosh?|deg|exp|floor|fmod|frexp|ldexp|log|log10|max|min|modf|pow|rad|random|randomseed|sinh?|sqrt|tanh?)|io\\.(close|flush|input|lines|open|output|popen|read|tmpfile|type|write)|os\\.(clock|date|difftime|execute|exit|getenv|remove|rename|setlocale|time|tmpname)|package\\.(cpath|loaded|loadlib|path|preload|seeall)|debug\\.(debug|[gs]etfenv|[gs]ethook|getinfo|[gs]etlocal|[gs]etmetatable|getregistry|[gs]etupvalue|traceback))\\b(?=\\s*(?:[({\"']|\\[\\[))",
+			"name": "support.function.library.lunar"
+		},
+		"builtin-functions": {
+			"match": "(?<![^.]\\.|:)\\b(assert|collectgarbage|dofile|error|getfenv|getmetatable|ipairs|loadfile|loadstring|module|next|pairs|pcall|print|rawequal|rawget|rawset|require|select|setfenv|setmetatable|tonumber|tostring|type|unpack|xpcall)\\b(?=\\s*(?:[({\"']|\\[\\[))",
+			"name": "support.function.lunar"
+		},
+		"builtin-constants": {
+			"match": "(?<![^.]\\.|:)\\b(false|nil|true|_G|_VERSION|math\\.(pi|huge))\\b|(?<![.])\\.{3}(?!\\.)",
+			"name": "constant.language.lunar"
+		},
+		"self": {
+			"match": "(?<![^.]\\.|:)\\b(self)\\b",
+			"name": "variable.language.self.lunar"
+		},
+		"function-call-expression": {
+			"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b(?=\\s*(?:[({\"']|\\[\\[))",
+			"name": "support.function.any-method.lunar"
+		},
+		"member-expression": {
+			"match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)",
+			"name": "variable.other.lunar"
+		},
+		"control-keywords": {
+			"match": "\\b(break|do|else|for|if|elseif|return|then|repeat|while|until|end|function|in)\\b",
+			"name": "keyword.control.lunar"
+		},
+		"local-variable-declaration": {
+			"match": "\\b(local)\\s+(\\w*)(?::\\s*(\\w+))?\\s*(=)?",
+			"captures": {
+				"1": { "name": "storage.modifier.local.lunar" },
+				"2": { "name": "variable.other.lunar" },
+				"3": { "patterns": [ { "include": "#type-expression" } ] },
+				"4": { "name": "keyword.operator.lunar" }
+			}
+		},
+		"variable-declaration": {
+			"match": "\\b(\\w*)(?::\\s*(\\w+))?\\s*(=)",
+			"captures": {
+				"1": { "name": "variable.other.lunar" },
+				"2": { "patterns": [ { "include": "#type-expression" } ] },
+				"3": { "name": "keyword.operator.lunar" }
+			}
+		},
+		"new-expression": {
+			"match": "([a-zA-Z_][a-zA-Z0-9_]*)\\.(new)\\b(?=\\s*(?:[({\"']|\\[\\[))",
+			"captures": {
+				"1": { "name": "entity.name.type.lunar" },
+				"2": { "name": "keyword.operator.new.lunar" }
+			}
+		}
+	}
+}

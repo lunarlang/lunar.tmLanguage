@@ -1,0 +1,25 @@
+{
+    "name": "lunar",
+    "displayName": "Lunar",
+    "description": "Language support for Lunar",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.31.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "lunar",
+            "aliases": ["Lunar", "lunar"],
+            "extensions": [".lunar",".d.lunar",".lunarconfig"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "lunar",
+            "scopeName": "source.lunar",
+            "path": "./syntaxes/lunar.tmLanguage.json"
+        }]
+    }
+}
